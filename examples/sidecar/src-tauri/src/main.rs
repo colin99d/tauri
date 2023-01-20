@@ -12,19 +12,23 @@ use tauri::api::process::{Command, CommandEvent};
 fn main() {
   tauri::Builder::default()
     .setup(|_| {
-        tauri::async_runtime::spawn(async move {
-          let (mut rx, _) = Command::new_sidecar("app")
-            .unwrap()
-            .spawn()
-            .unwrap();
+      tauri::async_runtime::spawn(async move {
+        let (mut rx, _) = Command::new_sidecar("app")
+          .unwrap()
+          .args(vec![
+            "/Users/colindelahunty/tauri/examples/sidecar/src-tauri/binaries/OpenBBTerminal\n",
+            "80",
+          ])
+          .spawn()
+          .unwrap();
 
-          println!("PART ONE PASSED");
-          while let Some(event) = rx.recv().await {
-            if let CommandEvent::Stdout(line) = event {
-                println!("{}", line);
-            }
+        println!("PART ONE PASSED");
+        while let Some(event) = rx.recv().await {
+          if let CommandEvent::Stdout(line) = event {
+            println!("{}", line);
           }
-        });
+        }
+      });
       Ok(())
     })
     .run(tauri::generate_context!())

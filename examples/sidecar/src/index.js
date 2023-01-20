@@ -181,7 +181,6 @@ const html = `
       resizeAddon.fit();
       window.addEventListener("resize", () => {
         resizeAddon.fit()
-        console.log(JSON.stringify({ cols: term.cols, rows: term.rows }));
         fetch('http://localhost:80/sizing/' + term.cols + '/' + term.rows);
       });
     </script>
@@ -193,7 +192,13 @@ const html = `
 const app = express();
 
 const expressWs = ws(app);
-const term = pty.spawn("zsh", [], { name: "xterm-color", cols: 170, rows: 60 });
+const term = pty.spawn("zsh", [], { name: "xterm-color", cols: 170, rows: 60, rendererType: "dom" });
+
+// Please send the file to run and then the port to run on
+var args = process.argv.slice(2);
+const binary_file = args[0];
+const port = parseInt(args[1]);
+console.log(args);
 
 console.log("Listening on port 80");
 
@@ -205,34 +210,28 @@ app.get("/", (req, res) => {
 app.ws("/ws", (ws) => {
   console.log("WS /ws");
   // run command in shell
-  term.write("conda activate obb && python /Users/colindelahunty/OpenBBTerminal/terminal.py\r")
+  term.write(binary_file)
   setTimeout(() => term.kill(), 3600 * 1000); // session timeout
   term.on("data", (data) => {
     try {
-      console.log("data: ", data);
       ws.send(data);
     } catch (err) {}
   });
   ws.on("message", (data) => {
-    console.log("message: ", data);
     term.write(data)
   });
 });
 
 app.get('/sizing/:cols/:rows', (req, res) => {
-  console.log("------------");
-  console.log(req.params.cols)
-  console.log(req.params.rows)
   cols = parseInt(req.params.cols),
   rows = parseInt(req.params.rows),
-  console.log(JSON.stringify({ cols: cols, rows: rows }));
+  console.log({rows: rows, cols: cols})
 
   term.resize(cols, rows);
-  console.log('Resized terminal ' + cols + ' cols and ' + rows + ' rows.');
   res.end();
 });
 
 // Prevent malformed packets from crashing server.
 expressWs.getWss().on("connection", (ws) => ws.on("error", console.error));
 
-app.listen(80, "0.0.0.0");
+app.listen(port, "0.0.0.0");

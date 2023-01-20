@@ -24,7 +24,7 @@
         "../../.icons/icon.ico"
       ],
       "resources": [],
-      "externalBin": ["binaries/app"],
+      "externalBin": ["binaries/*"],
       "copyright": "",
       "category": "DeveloperTool",
       "shortDescription": "",
@@ -44,7 +44,12 @@
         "scope": [
           {
             "name": "binaries/app",
-            "sidecar": true
+            "sidecar": true,
+            "args": [
+              {
+                "validator": "\\S+"
+              }
+            ]
           }
         ]
       }
@@ -59,7 +64,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self' ws://localhost/ws  https://unpkg.com/xterm@4.11.0/css/xterm.css"
+      "csp": "default-src 'self' ws://localhost/ws"
     },
     "updater": {
       "active": false
