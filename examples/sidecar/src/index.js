@@ -188,29 +188,31 @@ const html = `
 </html>
 
 `
-
 const app = express();
-
 const expressWs = ws(app);
-const term = pty.spawn("zsh", [], { name: "xterm-color", cols: 170, rows: 60, rendererType: "dom" });
+const term = pty.spawn("zsh", [], { name: "xterm-color", cols: 120, rows: 40 });
 
 // Please send the file to run and then the port to run on
 var args = process.argv.slice(2);
 const binary_file = args[0];
 const port = parseInt(args[1]);
-console.log(args);
 
-console.log("Listening on port 80");
+console.log("Listening on port " + port);
 
 app.get("/", (req, res) => {
   console.log("GET /");
+  cols = parseInt(req.query.cols);
+  rows = parseInt(req.query.rows);
+  if (cols > 0 && rows > 0) {
+    term.resize(cols, rows);
+  }
   res.setHeader("Content-Type", "text/html");
   res.send(html);
 });
 app.ws("/ws", (ws) => {
   console.log("WS /ws");
   // run command in shell
-  term.write(binary_file)
+  term.write(binary_file + "\n")
   setTimeout(() => term.kill(), 3600 * 1000); // session timeout
   term.on("data", (data) => {
     try {
@@ -225,8 +227,6 @@ app.ws("/ws", (ws) => {
 app.get('/sizing/:cols/:rows', (req, res) => {
   cols = parseInt(req.params.cols),
   rows = parseInt(req.params.rows),
-  console.log({rows: rows, cols: cols})
-
   term.resize(cols, rows);
   res.end();
 });

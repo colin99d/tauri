@@ -23,8 +23,8 @@
         "../../.icons/icon.icns",
         "../../.icons/icon.ico"
       ],
-      "resources": [],
-      "externalBin": ["binaries/*"],
+      "resources": ["binaries/*"],
+      "externalBin": ["binaries/app"],
       "copyright": "",
       "category": "DeveloperTool",
       "shortDescription": "",
