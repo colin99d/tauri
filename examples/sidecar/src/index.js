@@ -179,7 +179,10 @@ const html = `
       term.open(document.getElementById("terminal"));
 
       resizeAddon.fit();
-      window.addEventListener("resize", () => resizeAddon.fit());
+      window.addEventListener("resize", () => {
+        resizeAddon.fit()
+        console.log(JSON.stringify({ cols: term.cols, rows: term.rows }));
+      });
     </script>
   </body>
 </html>
@@ -201,7 +204,7 @@ app.ws("/ws", (ws) => {
   console.log("WS /ws");
   const term = pty.spawn("zsh", [], { name: "xterm-color", cols: 170, rows: 60 });
   // run command in shell
-  term.write("conda activate obb && python /Users/colindelahunty/OpenBBTerminal/terminal.py\n")
+  term.write("conda activate obb && python /Users/colindelahunty/OpenBBTerminal/terminal.py\r")
   setTimeout(() => term.kill(), 3600 * 1000); // session timeout
   term.on("data", (data) => {
     try {

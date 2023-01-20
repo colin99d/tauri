@@ -3,23 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <title>OpenBB Terminal</title>
-    <style>
-      #terminal {
-        height: 100vh;
-        width: 100vw;
-        position:absolute;
-        top:0px;
-        right:0px;
-        background-color: black;
-      }
-    </style>
   </head>
   <body>
     <div id="terminal"></div>
-    <script src="https://unpkg.com/xterm@4.11.0/lib/xterm.js"></script>
-    <script src="https://unpkg.com/xterm-addon-attach@0.6.0/lib/xterm-addon-attach.js"></script>
-    <script src="https://unpkg.com/xterm-addon-fit@0.5.0/lib/xterm-addon-fit.js"></script>
-    <script src="https://unpkg.com/xterm-addon-web-links@0.6.0/lib/xterm-addon-web-links.js"></script>
     <script>
       function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
