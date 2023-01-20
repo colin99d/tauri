@@ -8,12 +8,10 @@
 )]
 
 use tauri::api::process::{Command, CommandEvent};
-use tauri::Manager;
 
 fn main() {
   tauri::Builder::default()
-    .setup(|app| {
-        let window = app.get_window("main").unwrap();
+    .setup(|_| {
         tauri::async_runtime::spawn(async move {
           let (mut rx, _) = Command::new_sidecar("app")
             .unwrap()
@@ -23,9 +21,7 @@ fn main() {
           println!("PART ONE PASSED");
           while let Some(event) = rx.recv().await {
             if let CommandEvent::Stdout(line) = event {
-              window
-                .emit("message", Some(format!("'{}'", line)))
-                .unwrap();
+                println!("{}", line);
             }
           }
         });

@@ -182,6 +182,7 @@ const html = `
       window.addEventListener("resize", () => {
         resizeAddon.fit()
         console.log(JSON.stringify({ cols: term.cols, rows: term.rows }));
+        fetch('http://localhost:80/sizing/' + term.cols + '/' + term.rows);
       });
     </script>
   </body>
@@ -192,6 +193,7 @@ const html = `
 const app = express();
 
 const expressWs = ws(app);
+const term = pty.spawn("zsh", [], { name: "xterm-color", cols: 170, rows: 60 });
 
 console.log("Listening on port 80");
 
@@ -202,7 +204,6 @@ app.get("/", (req, res) => {
 });
 app.ws("/ws", (ws) => {
   console.log("WS /ws");
-  const term = pty.spawn("zsh", [], { name: "xterm-color", cols: 170, rows: 60 });
   // run command in shell
   term.write("conda activate obb && python /Users/colindelahunty/OpenBBTerminal/terminal.py\r")
   setTimeout(() => term.kill(), 3600 * 1000); // session timeout
@@ -218,8 +219,20 @@ app.ws("/ws", (ws) => {
   });
 });
 
+app.get('/sizing/:cols/:rows', (req, res) => {
+  console.log("------------");
+  console.log(req.params.cols)
+  console.log(req.params.rows)
+  cols = parseInt(req.params.cols),
+  rows = parseInt(req.params.rows),
+  console.log(JSON.stringify({ cols: cols, rows: rows }));
+
+  term.resize(cols, rows);
+  console.log('Resized terminal ' + cols + ' cols and ' + rows + ' rows.');
+  res.end();
+});
+
 // Prevent malformed packets from crashing server.
 expressWs.getWss().on("connection", (ws) => ws.on("error", console.error));
 
 app.listen(80, "0.0.0.0");
-
