@@ -14,5 +14,11 @@
   "devDependencies": {
     "execa": "5.1.1",
     "pkg": "5.2.1"
+  },
+  "dependencies": {
+    "express-ws": "^5.0.2",
+    "n": "^9.0.1",
+    "node": "^17.9.1",
+    "node-pty": "^0.10.1"
   }
 }
